@@ -10,28 +10,23 @@ servers:
 
 paths:
 
-  # Рецепты
+  # ==================== РЕЦЕПТЫ ====================
   /recipes:
     get:
-      summary: Получить список рецептов (с пагинацией и фильтрами)
-      parameters:
-        - name: page
-          in: query
-          schema: { type: integer, default: 1 }
-        - name: limit
-          in: query
-          schema: { type: integer, default: 20 }
-        - name: category
-          in: query
-          schema: { type: string }
-        - name: search
-          in: query
-          schema: { type: string }
+      summary: Получить список рецептов
       responses:
         '200':
           description: Успешно
+
+    post:
+      summary: Создать новый рецепт
+      responses:
+        '201':
+          description: Рецепт успешно создан
         '400':
-          description: Неверные параметры запроса
+          description: Ошибка в данных
+        '401':
+          description: Не авторизован
 
   /recipes/{id}:
     get:
@@ -40,44 +35,53 @@ paths:
         - name: id
           in: path
           required: true
-          schema: { type: integer }
+          schema:
+            type: integer
       responses:
         '200':
           description: Рецепт найден
         '404':
           description: Рецепт не найден
 
-  /recipes:
+  # ==================== КОММЕНТАРИИ ====================
+  /recipes/{recipeId}/comments:
+    get:
+      summary: Получить комментарии к рецепту
+      responses:
+        '200':
+          description: Комментарии получены
+
     post:
-      summary: Создать новый рецепт
+      summary: Добавить комментарий
       responses:
         '201':
-          description: Рецепт успешно создан
-        '400':
-          description: Ошибка валидации данных
+          description: Комментарий добавлен
         '401':
           description: Не авторизован
 
-  # Комментарии
-  /recipes/{recipeId}/comments:
-    get:
-      summary: Получить все комментарии к рецепту
-    post:
-      summary: Добавить комментарий к рецепту
-
-  # Авторизация
+  # ==================== АВТОРИЗАЦИЯ ====================
   /auth/register:
     post:
-      summary: Регистрация нового пользователя
+      summary: Регистрация пользователя
+      responses:
+        '201':
+          description: Пользователь создан
+        '400':
+          description: Ошибка в данных
 
   /auth/login:
     post:
-      summary: Авторизация пользователя
+      summary: Вход пользователя
+      responses:
+        '200':
+          description: Успешный вход
+        '401':
+          description: Неверные данные
 
 components:
   schemas:
     Error:
       type: object
       properties:
-        message: { type: string }
-        statusCode: { type: integer }
+        message:
+          type: string
