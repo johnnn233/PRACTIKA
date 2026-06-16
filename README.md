@@ -7,7 +7,7 @@
 
 # Архитектура системы
 
-![Architecture]("C:\Users\Hyawei\Downloads\архитектура системы.excalidraw")
+![Архитектура системы](docs/images/architecture.png.excalidraw)
 
 ## Общая архитектура
 
