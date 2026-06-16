@@ -5,10 +5,30 @@
 ## О проекте
  Кулинарный сайт
 
-## Технологии
-- Frontend: HTML CSS JS
-- Backend: NODE JS 
-- База данных: PostgreSQL
+# Архитектура системы
+
+![Architecture]("C:\Users\Hyawei\Downloads\архитектура системы.excalidraw")
+
+## Общая архитектура
+
+Используется **трёхзвенная (Client-Server-Database)** архитектура.
+
+### Компоненты:
+
+- **Frontend** — HTML, CSS, JavaScript  
+  Отвечает за интерфейс пользователя, отображение рецептов, формы добавления.
+
+- **Backend** — Node.js + Express  
+  Обрабатывает бизнес-логику, валидацию данных, авторизацию, работу с базой.
+
+- **Database** — PostgreSQL  
+  Хранит пользователей, рецепты, ингредиенты, категории и т.д.
+
+- **API** — REST API (JSON)  
+  Связующее звено между Frontend и Backend.
+
+### Поток данных:
+Пользователь → Frontend → REST API → Backend → PostgreSQL
 
 ## Как запустить проект
 
