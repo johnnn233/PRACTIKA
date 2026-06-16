@@ -37,9 +37,10 @@ paths:
           required: true
           schema:
             type: integer
+          description: ID рецепта
       responses:
         '200':
-          description: Рецепт найден
+          description: Рецепт успешно найден
         '404':
           description: Рецепт не найден
 
