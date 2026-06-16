@@ -1,0 +1,83 @@
+openapi: 3.0.0
+info:
+  title: Кулинарный блог API
+  description: API для кулинарного блога-форума с рецептами
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000/api
+    description: Локальный сервер разработки
+
+paths:
+
+  # Рецепты
+  /recipes:
+    get:
+      summary: Получить список рецептов (с пагинацией и фильтрами)
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: search
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Успешно
+        '400':
+          description: Неверные параметры запроса
+
+  /recipes/{id}:
+    get:
+      summary: Получить один рецепт по ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Рецепт найден
+        '404':
+          description: Рецепт не найден
+
+  /recipes:
+    post:
+      summary: Создать новый рецепт
+      responses:
+        '201':
+          description: Рецепт успешно создан
+        '400':
+          description: Ошибка валидации данных
+        '401':
+          description: Не авторизован
+
+  # Комментарии
+  /recipes/{recipeId}/comments:
+    get:
+      summary: Получить все комментарии к рецепту
+    post:
+      summary: Добавить комментарий к рецепту
+
+  # Авторизация
+  /auth/register:
+    post:
+      summary: Регистрация нового пользователя
+
+  /auth/login:
+    post:
+      summary: Авторизация пользователя
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        message: { type: string }
+        statusCode: { type: integer }
