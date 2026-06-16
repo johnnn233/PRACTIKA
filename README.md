@@ -7,7 +7,7 @@
 
 # Архитектура системы
 
-![Архитектура системы](docs/images/architecture.png.excalidraw)
+![Архитектура системы](docs/images/architecture.png)
 
 ## Общая архитектура
 
