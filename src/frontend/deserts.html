@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Десерты — cocoshef</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="header-container">
+        <a href="main.html" class="logo">cocoshef</a>
+        <nav class="nav">
+
+            <a href="#" class="nav-link hidden" id="nav-my-profile">Мой профиль</a>
+        </nav>
+        <div class="user-actions">
+            <button class="btn btn-secondary" id="btn-create-recipe-trigger">Создать рецепт</button>
+            <button class="btn btn-secondary" id="auth-trigger-btn">Войти</button>
+
+            <div class="profile-preview hidden" id="profile-block">
+                <div class="avatar-container" id="profile-avatar-container"></div>
+                <span class="profile-name" id="profile-display-name">Гость</span>
+                <button class="logout-btn" id="logout-btn">Выйти</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="main-content">
+    <section class="filter-section">
+        <h1 class="page-title">Десерты с душой</h1>
+        <p class="page-subtitle">Сладкие моменты, которые запоминаются</p>
+
+        <div class="filter-wrapper">
+            <div class="filter-group">
+                <a href="main.html" class="filter-btn">Все рецепты</a>
+                <a href="breakfast.html" class="filter-btn">Завтраки</a>
+                <button class="filter-btn">Веганское</button>
+                <button class="filter-btn active">Десерты</button>
+
+            </div>
+            <div class="sort-select-wrapper">
+                <select class="sort-select">
+                    <option>По рейтингу</option>
+                    <option>Сначала новые</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <!-- Главный десерт -->
+    <section class="recipe-detail-container" id="featured-dessert-container"></section>
+
+    <!-- Остальные десерты -->
+    <section class="similar-section">
+        <h3 class="section-divider-title">Ещё десерты нашей кухни</h3>
+        <div class="recipe-grid" id="desserts-grid"></div>
+    </section>
+</main>
+
+<footer class="footer">
+    <p>&copy; 2026 cocoshef. С любовью к чистым вкусам.</p>
+</footer>
+
+<script>
+    const dessertRecipes = [
+        {
+            id: 201,
+            title: "Шоколадный лавовый кекс с малиной",
+            description: "Тёплый шоколадный кекс с жидкой сердцевиной, свежей малиной и шариком ванильного мороженого.",
+            kbju: { k: 420, b: 7, j: 24, u: 45 },
+            image: "https://i.pinimg.com/736x/d1/35/e5/d135e5c8a2bd33c88c1f92a55b0c1d4f.jpg",
+            rating: 4.9,
+            votes: 89,
+            author: { name: "София Л.", login: "sophia", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100" }
+        },
+        {
+            id: 202,
+            title: "Тирамису в баночке",
+            description: "Классический итальянский десерт с нежным маскарпоне, кофе и какао.",
+            kbju: { k: 380, b: 9, j: 26, u: 32 },
+            image: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&q=80&w=800",
+            rating: 4.8,
+            votes: 64,
+            author: { name: "Анна М.", login: "anna", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100" }
+        },
+        {
+            id: 203,
+            title: "Чизкейк Нью-Йорк с клубникой",
+            description: "Кремовый классический чизкейк на песочной основе с ярким клубничным топпингом.",
+            kbju: { k: 450, b: 11, j: 32, u: 38 },
+            image: "https://images.unsplash.com/photo-1563729784474-77d17bf7d8e0?auto=format&fit=crop&q=80&w=800",
+            rating: 4.7,
+            votes: 52,
+            author: { name: "Марк Савин", login: "mark", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100" }
+        }
+    ];
+
+    function getAvatarHtml(user, sizeClass = "avatar") {
+        if (user && user.avatar) return `<img src="${user.avatar}" alt="${user.name}" class="${sizeClass}">`;
+        const letter = user && user.name ? user.name[0].toUpperCase() : '?';
+        return `<div class="${sizeClass} avatar-placeholder">${letter}</div>`;
+    }
+
+    function renderDessertsPage() {
+        const featuredContainer = document.getElementById('featured-dessert-container');
+        const grid = document.getElementById('desserts-grid');
+        const featured = dessertRecipes[0];
+
+        featuredContainer.innerHTML = `
+               <article class="main-recipe">
+        <div class="recipe-hero-image">
+            <img src="${featured.image}" alt="${featured.title}">
+        </div>
+        <div class="recipe-content">
+            <div class="recipe-meta-top">
+                <a href="#" class="author-badge">
+                    ${getAvatarHtml(featured.author, "avatar-sm")}
+                    <span>опубликовал(а) ${featured.author.name}</span>
+                </a>
+                <div class="rating-display">
+                    <div class="stars">★★★★★</div>
+                    <span class="rating-value">${featured.rating.toFixed(1)}</span>
+                    <span class="votes-count">(${featured.votes} отзывов)</span>
+                </div>
+            </div>
+
+            <h2 class="recipe-title">${featured.title}</h2>
+            <p class="recipe-description">${featured.description}</p>
+
+            <div class="kbju-container">
+                <div class="kbju-item"><span class="kbju-val">${featured.kbju.k}</span><span class="kbju-label">Ккал</span></div>
+                <div class="kbju-item"><span class="kbju-val">${featured.kbju.b}г</span><span class="kbju-label">Белки</span></div>
+                <div class="kbju-item"><span class="kbju-val">${featured.kbju.j}г</span><span class="kbju-label">Жиры</span></div>
+                <div class="kbju-item"><span class="kbju-val">${featured.kbju.u}г</span><span class="kbju-label">Углеводы</span></div>
+            </div>
+
+            <!-- === БЛОК ОЦЕНКИ === -->
+            <div class="rate-this" data-recipe-id="${featured.id}">
+                <span class="rate-title">Оцените рецепт:</span>
+                <div class="star-rating-input">
+                    <input type="radio" id="star5-b${featured.id}" name="rate-b${featured.id}" value="5"><label for="star5-b${featured.id}"></label>
+                    <input type="radio" id="star4-b${featured.id}" name="rate-b${featured.id}" value="4"><label for="star4-b${featured.id}"></label>
+                    <input type="radio" id="star3-b${featured.id}" name="rate-b${featured.id}" value="3"><label for="star3-b${featured.id}"></label>
+                    <input type="radio" id="star2-b${featured.id}" name="rate-b${featured.id}" value="2"><label for="star2-b${featured.id}"></label>
+                    <input type="radio" id="star1-b${featured.id}" name="rate-b${featured.id}" value="1"><label for="star1-b${featured.id}"></label>
+                </div>
+            </div>
+        </div>
+    </article>
+            `;
+
+        grid.innerHTML = '';
+        dessertRecipes.slice(1).forEach(rec => {
+            const card = document.createElement('article');
+            card.className = 'recipe-card';
+            card.innerHTML = `
+                    <div class="card-img-wrapper">
+                        <img src="${rec.image}" alt="${rec.title}">
+                        <div class="card-rating">★ ${rec.rating.toFixed(1)}</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="author-badge card-author">
+                            ${getAvatarHtml(rec.author, "avatar-sm")}
+                            <span>${rec.author.name}</span>
+                        </div>
+                        <h4 class="card-title">${rec.title}</h4>
+                        <p class="card-desc">${rec.description}</p>
+                        <div class="card-kbju">
+                            <span><b>${rec.kbju.k}</b> ккал</span>
+                        </div>
+                    </div>
+                `;
+            grid.appendChild(card);
+        });
+
+
+
+        function setupRatingSystem() {
+            const ratingInputs = document.querySelectorAll('.star-rating-input input');
+            ratingInputs.forEach(input => {
+                // Удаляем старые слушатели, чтобы не дублировались
+                input.replaceWith(input.cloneNode(true));
+            });
+
+            // Добавляем новые
+            document.querySelectorAll('.star-rating-input input').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const ratingValue = parseInt(e.target.value);
+                    const recipeId = e.target.name.split('-')[1].replace('b',''); // для breakfasts/desserts
+
+                    // Здесь можно добавить логику сохранения рейтинга в localStorage,
+                    // но для начала хотя бы покажем, что работает
+                    console.log(`Оценка ${ratingValue} для рецепта ${recipeId}`);
+                    alert(`Вы поставили ${ratingValue} ★ рецепту!`);
+                });
+            });
+        }
+        setupRatingSystem();
+    }
+
+    document.addEventListener('DOMContentLoaded', renderDessertsPage);
+</script>
+</body>
+</html>

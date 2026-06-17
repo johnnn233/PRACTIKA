@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Завтраки — cocoshef</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="header-container">
+        <a href="main.html" class="logo">cocoshef</a>
+        <nav class="nav">
+
+            <a href="#" class="nav-link hidden" id="nav-my-profile">Мой профиль</a>
+        </nav>
+        <div class="user-actions">
+            <button class="btn btn-secondary" id="btn-create-recipe-trigger">Создать рецепт</button>
+            <button class="btn btn-secondary" id="auth-trigger-btn">Войти</button>
+
+            <div class="profile-preview hidden" id="profile-block">
+                <div class="avatar-container" id="profile-avatar-container"></div>
+                <span class="profile-name" id="profile-display-name">Гость</span>
+                <button class="logout-btn" id="logout-btn">Выйти</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="main-content">
+    <section class="filter-section">
+        <h1 class="page-title">Завтраки с душой</h1>
+        <p class="page-subtitle">Начните день красиво и вкусно</p>
+
+        <div class="filter-wrapper">
+            <div class="filter-group">
+                <!-- Вот эта кнопка теперь ведёт на главную -->
+                <a href="main.html" class="filter-btn">Все рецепты</a>
+                <button class="filter-btn active">Завтраки</button>
+                <button class="filter-btn">Веганское</button>
+                <a href="deserts.html" class="filter-btn">Десерты</a>
+            </div>
+            <div class="sort-select-wrapper">
+                <select class="sort-select">
+                    <option>По рейтингу</option>
+                    <option>Сначала новые</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <!-- Главный рецепт -->
+    <section class="recipe-detail-container" id="featured-breakfast-container"></section>
+
+    <!-- Остальные рецепты -->
+    <section class="similar-section">
+        <h3 class="section-divider-title">Ещё завтраки нашей кухни</h3>
+        <div class="recipe-grid" id="breakfasts-grid"></div>
+    </section>
+</main>
+
+<footer class="footer">
+    <p>&copy; 2026 cocoshef. С любовью к чистым вкусам.</p>
+</footer>
+
+<script>
+    // Данные завтраков
+    const breakfastRecipes = [
+        {
+            id: 101,
+            title: "Французский тост с ягодами и рикоттой",
+            description: "Воздушные бриоши в яичной смеси с ванилью и корицей, подаются с свежими ягодами, рикоттой и медом. Идеальное воскресное утро.",
+            kbju: { k: 385, b: 14, j: 18, u: 42 },
+            image: "https://img.povar.ru/mobile/5f/2c/a1/0e/tost_s_rikottoi_i_klubnikoi-670856.JPG",
+            rating: 4.9,
+            votes: 67,
+            author: { name: "София Л.", login: "sophia", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100" }
+        },
+        {
+            id: 102,
+            title: "Овсяная каша с бананом, арахисовой пастой и какао",
+            description: "Кремовая овсянка на кокосовом молоке с бананом, ложкой арахисовой пасты и щепоткой какао.",
+            kbju: { k: 460, b: 13, j: 22, u: 58 },
+            image: "https://images.unsplash.com/photo-1511699651485-9c2f9e8f5f9e?auto=format&fit=crop&q=80&w=800",
+            rating: 4.8,
+            votes: 54,
+            author: { name: "Марк Савин", login: "mark", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100" }
+        }
+    ];
+
+    function getAvatarHtml(user, sizeClass = "avatar") {
+        if (user && user.avatar) return `<img src="${user.avatar}" alt="${user.name}" class="${sizeClass}">`;
+        const letter = user && user.name ? user.name[0].toUpperCase() : '?';
+        return `<div class="${sizeClass} avatar-placeholder">${letter}</div>`;
+    }
+
+    function renderBreakfastPage() {
+        const featuredContainer = document.getElementById('featured-breakfast-container');
+        const grid = document.getElementById('breakfasts-grid');
+        const featured = breakfastRecipes[0];
+
+
+        // Главный рецепт
+        featuredContainer.innerHTML = `
+                <article class="main-recipe">
+        <div class="recipe-hero-image">
+            <img src="${featured.image}" alt="${featured.title}">
+        </div>
+        <div class="recipe-content">
+            <div class="recipe-meta-top">
+                <a href="#" class="author-badge">
+                    ${getAvatarHtml(featured.author, "avatar-sm")}
+                    <span>опубликовал(а) ${featured.author.name}</span>
+                </a>
+                <div class="rating-display">
+                    <div class="stars">★★★★★</div>
+                    <span class="rating-value">${featured.rating.toFixed(1)}</span>
+                    <span class="votes-count">(${featured.votes} отзывов)</span>
+                </div>
+            </div>
+
+            <h2 class="recipe-title">${featured.title}</h2>
+            <p class="recipe-description">${featured.description}</p>
+
+            <div class="kbju-container">
+                <div class="kbju-item"><span class="kbju-val">${featured.kbju.k}</span><span class="kbju-label">Ккал</span></div>
+                <div class="kbju-item"><span class="kbju-val">${featured.kbju.b}г</span><span class="kbju-label">Белки</span></div>
+                <div class="kbju-item"><span class="kbju-val">${featured.kbju.j}г</span><span class="kbju-label">Жиры</span></div>
+                <div class="kbju-item"><span class="kbju-val">${featured.kbju.u}г</span><span class="kbju-label">Углеводы</span></div>
+            </div>
+
+            <!-- === БЛОК ОЦЕНКИ === -->
+            <div class="rate-this" data-recipe-id="${featured.id}">
+                <span class="rate-title">Оцените рецепт:</span>
+                <div class="star-rating-input">
+                    <input type="radio" id="star5-b${featured.id}" name="rate-b${featured.id}" value="5"><label for="star5-b${featured.id}"></label>
+                    <input type="radio" id="star4-b${featured.id}" name="rate-b${featured.id}" value="4"><label for="star4-b${featured.id}"></label>
+                    <input type="radio" id="star3-b${featured.id}" name="rate-b${featured.id}" value="3"><label for="star3-b${featured.id}"></label>
+                    <input type="radio" id="star2-b${featured.id}" name="rate-b${featured.id}" value="2"><label for="star2-b${featured.id}"></label>
+                    <input type="radio" id="star1-b${featured.id}" name="rate-b${featured.id}" value="1"><label for="star1-b${featured.id}"></label>
+                </div>
+            </div>
+        </div>
+    </article>
+            `;
+
+        // Сетка
+        grid.innerHTML = '';
+        breakfastRecipes.slice(1).forEach(rec => {
+            const card = document.createElement('article');
+            card.className = 'recipe-card';
+            card.innerHTML = `
+                    <div class="card-img-wrapper">
+                        <img src="${rec.image}" alt="${rec.title}">
+                        <div class="card-rating">★ ${rec.rating.toFixed(1)}</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="author-badge card-author">
+                            ${getAvatarHtml(rec.author, "avatar-sm")}
+                            <span>${rec.author.name}</span>
+                        </div>
+                        <h4 class="card-title">${rec.title}</h4>
+                        <p class="card-desc">${rec.description}</p>
+                        <div class="card-kbju">
+                            <span><b>${rec.kbju.k}</b> ккал</span>
+                        </div>
+                    </div>
+                `;
+            grid.appendChild(card);
+        });
+        function setupRatingSystem() {
+            const ratingInputs = document.querySelectorAll('.star-rating-input input');
+            ratingInputs.forEach(input => {
+                // Удаляем старые слушатели, чтобы не дублировались
+                input.replaceWith(input.cloneNode(true));
+            });
+
+            // Добавляем новые
+            document.querySelectorAll('.star-rating-input input').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const ratingValue = parseInt(e.target.value);
+                    const recipeId = e.target.name.split('-')[1].replace('b',''); // для breakfasts/desserts
+
+                    // Здесь можно добавить логику сохранения рейтинга в localStorage,
+                    // но для начала хотя бы покажем, что работает
+                    console.log(`Оценка ${ratingValue} для рецепта ${recipeId}`);
+                    alert(`Вы поставили ${ratingValue} ★ рецепту!`);
+                });
+            });
+        }
+        setupRatingSystem();
+    }
+
+    document.addEventListener('DOMContentLoaded', renderBreakfastPage);
+
+</script>
+</body>
+</html>
