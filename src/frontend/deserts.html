@@ -16,7 +16,6 @@
     <div class="header-container">
         <a href="main.html" class="logo">cocoshef</a>
         <nav class="nav">
-
             <a href="#" class="nav-link hidden" id="nav-my-profile">Мой профиль</a>
         </nav>
         <div class="user-actions">
@@ -41,9 +40,8 @@
             <div class="filter-group">
                 <a href="main.html" class="filter-btn">Все рецепты</a>
                 <a href="breakfast.html" class="filter-btn">Завтраки</a>
-                <button class="filter-btn">Веганское</button>
+                <a href="vegan.html" class="filter-btn">Веганское</a>
                 <button class="filter-btn active">Десерты</button>
-
             </div>
             <div class="sort-select-wrapper">
                 <select class="sort-select">
@@ -54,10 +52,8 @@
         </div>
     </section>
 
-    <!-- Главный десерт -->
     <section class="recipe-detail-container" id="featured-dessert-container"></section>
 
-    <!-- Остальные десерты -->
     <section class="similar-section">
         <h3 class="section-divider-title">Ещё десерты нашей кухни</h3>
         <div class="recipe-grid" id="desserts-grid"></div>
@@ -68,99 +64,428 @@
     <p>&copy; 2026 cocoshef. С любовью к чистым вкусам.</p>
 </footer>
 
+<!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ / РЕГИСТРАЦИИ -->
+<div class="modal-overlay hidden" id="auth-modal">
+    <div class="modal-card">
+        <button class="modal-close" id="modal-close-btn">&times;</button>
+        <div class="modal-tabs">
+            <button class="tab-btn active" id="tab-login">Вход</button>
+            <button class="tab-btn" id="tab-register">Регистрация</button>
+        </div>
+
+        <div class="auth-error-msg hidden" id="auth-error">Неверный логин или пароль</div>
+
+        <form id="login-form" class="auth-form">
+            <div class="form-group">
+                <label>Логин (никнейм)</label>
+                <input type="text" id="login-username" required placeholder="Введите логин">
+            </div>
+            <div class="form-group">
+                <label>Пароль</label>
+                <input type="password" id="login-password" required placeholder="Ваш пароль">
+            </div>
+            <button type="submit" class="btn btn-submit">Войти на сайт</button>
+        </form>
+
+        <form id="register-form" class="auth-form hidden">
+            <div class="form-group">
+                <label>Ваше имя</label>
+                <input type="text" id="reg-name" required placeholder="Имя для отображения">
+            </div>
+            <div class="form-group">
+                <label>Логин</label>
+                <input type="text" id="reg-username" required placeholder="Уникальный никнейм">
+            </div>
+            <div class="form-group">
+                <label>Пароль</label>
+                <input type="password" id="reg-password" required minlength="4" placeholder="Минимум 4 символа">
+            </div>
+            <div class="form-group">
+                <label>Аватар (необязательно)</label>
+                <div class="file-upload-wrapper">
+                    <input type="file" id="reg-avatar" accept="image/*">
+                    <span class="file-custom-btn">Выбрать файл</span>
+                    <span class="file-name-display" id="avatar-file-name">Файл не выбран</span>
+                </div>
+                <div class="avatar-preview-box hidden" id="avatar-preview-container">
+                    <img id="avatar-preview" src="" alt="Предпросмотр">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-submit">Зарегистрироваться</button>
+        </form>
+    </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО СОЗДАНИЯ РЕЦЕПТА -->
+<div class="modal-overlay hidden" id="recipe-modal">
+    <div class="modal-card modal-large">
+        <button class="modal-close" id="recipe-modal-close-btn">&times;</button>
+        <h2 class="modal-title-aesthetic">Новый рецепт</h2>
+        <p class="modal-subtitle-aesthetic">Поделитесь вашим кулинарным искусством</p>
+
+        <form id="create-recipe-form" class="auth-form">
+            <div class="form-group">
+                <label>Название блюда</label>
+                <input type="text" id="rec-title" required placeholder="Например: Пряный тыквенный суп">
+            </div>
+
+            <div class="form-group">
+                <label>Описание и способ приготовления</label>
+                <textarea id="rec-desc" required placeholder="Опишите процесс приготовления, детали подачи и ваши секреты..."></textarea>
+            </div>
+
+            <div class="kbju-inputs-row">
+                <div class="form-group">
+                    <label>Калории (ккал)</label>
+                    <input type="number" id="rec-kcal" required placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Белки (г)</label>
+                    <input type="number" id="rec-b" required placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Жиры (г)</label>
+                    <input type="number" id="rec-j" required placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Углеводы (г)</label>
+                    <input type="number" id="rec-u" required placeholder="0">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Фотография готового блюда</label>
+                <div class="file-upload-wrapper">
+                    <input type="file" id="rec-image" accept="image/*" required>
+                    <span class="file-custom-btn">Загрузить фото</span>
+                    <span class="file-name-display" id="recipe-file-name">Файл не выбран</span>
+                </div>
+                <div class="recipe-preview-box hidden" id="recipe-preview-container">
+                    <img id="recipe-preview" src="" alt="Готовое блюдо">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-submit">Опубликовать в cocoshef</button>
+        </form>
+    </div>
+</div>
+
 <script>
-    const dessertRecipes = [
-        {
-            id: 201,
-            title: "Шоколадный лавовый кекс с малиной",
-            description: "Тёплый шоколадный кекс с жидкой сердцевиной, свежей малиной и шариком ванильного мороженого.",
-            kbju: { k: 420, b: 7, j: 24, u: 45 },
-            image: "https://i.pinimg.com/736x/d1/35/e5/d135e5c8a2bd33c88c1f92a55b0c1d4f.jpg",
-            rating: 4.9,
-            votes: 89,
-            author: { name: "София Л.", login: "sophia", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100" }
-        },
-        {
-            id: 202,
-            title: "Тирамису в баночке",
-            description: "Классический итальянский десерт с нежным маскарпоне, кофе и какао.",
-            kbju: { k: 380, b: 9, j: 26, u: 32 },
-            image: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&q=80&w=800",
-            rating: 4.8,
-            votes: 64,
-            author: { name: "Анна М.", login: "anna", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100" }
-        },
-        {
-            id: 203,
-            title: "Чизкейк Нью-Йорк с клубникой",
-            description: "Кремовый классический чизкейк на песочной основе с ярким клубничным топпингом.",
-            kbju: { k: 450, b: 11, j: 32, u: 38 },
-            image: "https://images.unsplash.com/photo-1563729784474-77d17bf7d8e0?auto=format&fit=crop&q=80&w=800",
-            rating: 4.7,
-            votes: 52,
-            author: { name: "Марк Савин", login: "mark", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100" }
+    document.addEventListener('DOMContentLoaded', () => {
+        // ================= ДАННЫЕ ДЕСЕРТОВ =================
+        const dessertRecipes = [
+            {
+                id: 201,
+                title: "Шоколадный лавовый кекс с малиной",
+                description: "Тёплый шоколадный кекс с жидкой сердцевиной, свежей малиной и шариком ванильного мороженого.",
+                kbju: { k: 420, b: 7, j: 24, u: 45 },
+                image: "https://i.pinimg.com/736x/d1/35/e5/d135e5c8a2bd33c88c1f92a55b0c1d4f.jpg",
+                rating: 4.9,
+                votes: 89,
+                author: { name: "София Л.", login: "sophia", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100" }
+            },
+            {
+                id: 202,
+                title: "Тирамису в баночке",
+                description: "Классический итальянский десерт с нежным маскарпоне, кофе и какао.",
+                kbju: { k: 380, b: 9, j: 26, u: 32 },
+                image: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&q=80&w=800",
+                rating: 4.8,
+                votes: 64,
+                author: { name: "Анна М.", login: "anna", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100" }
+            },
+            {
+                id: 203,
+                title: "Чизкейк Нью-Йорк с клубникой",
+                description: "Кремовый классический чизкейк на песочной основе с ярким клубничным топпингом.",
+                kbju: { k: 450, b: 11, j: 32, u: 38 },
+                image: "https://images.unsplash.com/photo-1563729784474-77d17bf7d8e0?auto=format&fit=crop&q=80&w=800",
+                rating: 4.7,
+                votes: 52,
+                author: { name: "Марк Савин", login: "mark", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100" }
+            }
+        ];
+
+        // ================= ЭЛЕМЕНТЫ =================
+        const authTriggerBtn = document.getElementById('auth-trigger-btn');
+        const profileBlock = document.getElementById('profile-block');
+        const profileDisplayName = document.getElementById('profile-display-name');
+        const profileAvatarContainer = document.getElementById('profile-avatar-container');
+        const logoutBtn = document.getElementById('logout-btn');
+        const navMyProfile = document.getElementById('nav-my-profile');
+
+        const authModal = document.getElementById('auth-modal');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const tabLogin = document.getElementById('tab-login');
+        const tabRegister = document.getElementById('tab-register');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const authError = document.getElementById('auth-error');
+
+        const regAvatarInput = document.getElementById('reg-avatar');
+        const avatarFileName = document.getElementById('avatar-file-name');
+        const avatarPreviewContainer = document.getElementById('avatar-preview-container');
+        const avatarPreview = document.getElementById('avatar-preview');
+        let base64Avatar = "";
+
+        const btnCreateRecipeTrigger = document.getElementById('btn-create-recipe-trigger');
+        const recipeModal = document.getElementById('recipe-modal');
+        const recipeModalCloseBtn = document.getElementById('recipe-modal-close-btn');
+        const createRecipeForm = document.getElementById('create-recipe-form');
+        const recImageInput = document.getElementById('rec-image');
+        const recipeFileName = document.getElementById('recipe-file-name');
+        const recipePreviewContainer = document.getElementById('recipe-preview-container');
+        const recipePreview = document.getElementById('recipe-preview');
+        let base64RecipeImg = "";
+
+        // ================= АВАТАРКИ =================
+        function getAvatarHtml(user, sizeClass = "avatar") {
+            if (user && user.avatar) {
+                return `<img src="${user.avatar}" alt="${user.name}" class="${sizeClass}">`;
+            }
+            const firstLetter = user && user.name ? user.name.charAt(0).toUpperCase() : '?';
+            return `<div class="${sizeClass} avatar-placeholder">${firstLetter}</div>`;
         }
-    ];
 
-    function getAvatarHtml(user, sizeClass = "avatar") {
-        if (user && user.avatar) return `<img src="${user.avatar}" alt="${user.name}" class="${sizeClass}">`;
-        const letter = user && user.name ? user.name[0].toUpperCase() : '?';
-        return `<div class="${sizeClass} avatar-placeholder">${letter}</div>`;
-    }
+        // ================= АВТОРИЗАЦИЯ =================
+        function checkAuth() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                authTriggerBtn.classList.add('hidden');
+                profileBlock.classList.remove('hidden');
+                navMyProfile.classList.remove('hidden');
+                profileDisplayName.textContent = currentUser.name;
+                profileAvatarContainer.innerHTML = getAvatarHtml(currentUser, "avatar");
+            } else {
+                authTriggerBtn.classList.remove('hidden');
+                profileBlock.classList.add('hidden');
+                navMyProfile.classList.add('hidden');
+            }
+        }
 
-    function renderDessertsPage() {
-        const featuredContainer = document.getElementById('featured-dessert-container');
-        const grid = document.getElementById('desserts-grid');
-        const featured = dessertRecipes[0];
+        authTriggerBtn.addEventListener('click', () => {
+            authModal.classList.remove('hidden');
+            switchTab('login');
+        });
 
-        featuredContainer.innerHTML = `
-               <article class="main-recipe">
-        <div class="recipe-hero-image">
-            <img src="${featured.image}" alt="${featured.title}">
-        </div>
-        <div class="recipe-content">
-            <div class="recipe-meta-top">
-                <a href="#" class="author-badge">
-                    ${getAvatarHtml(featured.author, "avatar-sm")}
-                    <span>опубликовал(а) ${featured.author.name}</span>
-                </a>
-                <div class="rating-display">
-                    <div class="stars">★★★★★</div>
-                    <span class="rating-value">${featured.rating.toFixed(1)}</span>
-                    <span class="votes-count">(${featured.votes} отзывов)</span>
-                </div>
-            </div>
+        modalCloseBtn.addEventListener('click', () => authModal.classList.add('hidden'));
 
-            <h2 class="recipe-title">${featured.title}</h2>
-            <p class="recipe-description">${featured.description}</p>
+        function switchTab(type) {
+            authError.classList.add('hidden');
+            if (type === 'login') {
+                tabLogin.classList.add('active');
+                tabRegister.classList.remove('active');
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+            } else {
+                tabRegister.classList.add('active');
+                tabLogin.classList.remove('active');
+                registerForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            }
+        }
 
-            <div class="kbju-container">
-                <div class="kbju-item"><span class="kbju-val">${featured.kbju.k}</span><span class="kbju-label">Ккал</span></div>
-                <div class="kbju-item"><span class="kbju-val">${featured.kbju.b}г</span><span class="kbju-label">Белки</span></div>
-                <div class="kbju-item"><span class="kbju-val">${featured.kbju.j}г</span><span class="kbju-label">Жиры</span></div>
-                <div class="kbju-item"><span class="kbju-val">${featured.kbju.u}г</span><span class="kbju-label">Углеводы</span></div>
-            </div>
+        tabLogin.addEventListener('click', () => switchTab('login'));
+        tabRegister.addEventListener('click', () => switchTab('register'));
 
-            <!-- === БЛОК ОЦЕНКИ === -->
-            <div class="rate-this" data-recipe-id="${featured.id}">
-                <span class="rate-title">Оцените рецепт:</span>
-                <div class="star-rating-input">
-                    <input type="radio" id="star5-b${featured.id}" name="rate-b${featured.id}" value="5"><label for="star5-b${featured.id}"></label>
-                    <input type="radio" id="star4-b${featured.id}" name="rate-b${featured.id}" value="4"><label for="star4-b${featured.id}"></label>
-                    <input type="radio" id="star3-b${featured.id}" name="rate-b${featured.id}" value="3"><label for="star3-b${featured.id}"></label>
-                    <input type="radio" id="star2-b${featured.id}" name="rate-b${featured.id}" value="2"><label for="star2-b${featured.id}"></label>
-                    <input type="radio" id="star1-b${featured.id}" name="rate-b${featured.id}" value="1"><label for="star1-b${featured.id}"></label>
-                </div>
-            </div>
-        </div>
-    </article>
+        regAvatarInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                avatarFileName.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    base64Avatar = evt.target.result;
+                    avatarPreview.src = base64Avatar;
+                    avatarPreviewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                avatarFileName.textContent = "Файл не выбран";
+                avatarPreviewContainer.classList.add('hidden');
+                base64Avatar = "";
+            }
+        });
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const usernameVal = document.getElementById('login-username').value.trim();
+            const passwordVal = document.getElementById('login-password').value;
+
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const foundUser = users.find(u => u.login.toLowerCase() === usernameVal.toLowerCase() && u.password === passwordVal);
+
+            if (foundUser) {
+                localStorage.setItem('currentUser', JSON.stringify(foundUser));
+                checkAuth();
+                authModal.classList.add('hidden');
+                loginForm.reset();
+            } else {
+                authError.textContent = 'Неверный логин или пароль';
+                authError.classList.remove('hidden');
+            }
+        });
+
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nameVal = document.getElementById('reg-name').value.trim();
+            const usernameVal = document.getElementById('reg-username').value.trim();
+            const passwordVal = document.getElementById('reg-password').value;
+
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const userExists = users.some(u => u.login.toLowerCase() === usernameVal.toLowerCase());
+
+            if (userExists) {
+                authError.textContent = 'Этот логин уже занят!';
+                authError.classList.remove('hidden');
+            } else {
+                const newUser = {
+                    name: nameVal,
+                    login: usernameVal,
+                    password: passwordVal,
+                    avatar: base64Avatar || null
+                };
+                users.push(newUser);
+                localStorage.setItem('users', JSON.stringify(users));
+
+                localStorage.setItem('currentUser', JSON.stringify(newUser));
+                checkAuth();
+                authModal.classList.add('hidden');
+                registerForm.reset();
+                avatarFileName.textContent = "Файл не выбран";
+                avatarPreviewContainer.classList.add('hidden');
+                base64Avatar = "";
+            }
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('currentUser');
+            checkAuth();
+        });
+
+        // ================= СОЗДАНИЕ РЕЦЕПТА =================
+        btnCreateRecipeTrigger.addEventListener('click', () => {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                authModal.classList.remove('hidden');
+                switchTab('login');
+            } else {
+                recipeModal.classList.remove('hidden');
+            }
+        });
+
+        recipeModalCloseBtn.addEventListener('click', () => recipeModal.classList.add('hidden'));
+
+        recImageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                recipeFileName.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    base64RecipeImg = evt.target.result;
+                    recipePreview.src = base64RecipeImg;
+                    recipePreviewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                recipeFileName.textContent = "Файл не выбран";
+                recipePreviewContainer.classList.add('hidden');
+                base64RecipeImg = "";
+            }
+        });
+
+        createRecipeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return;
+
+            const title = document.getElementById('rec-title').value.trim();
+            const desc = document.getElementById('rec-desc').value.trim();
+            const kcal = parseInt(document.getElementById('rec-kcal').value);
+            const b = parseInt(document.getElementById('rec-b').value);
+            const j = parseInt(document.getElementById('rec-j').value);
+            const u = parseInt(document.getElementById('rec-u').value);
+
+            const newRecipeObj = {
+                id: Date.now(),
+                title: title,
+                description: desc,
+                kbju: { k: kcal, b: b, j: j, u: u },
+                image: base64RecipeImg,
+                rating: 5.0,
+                votes: 1,
+                author: {
+                    name: currentUser.name,
+                    login: currentUser.login,
+                    avatar: currentUser.avatar
+                }
+            };
+
+            const allRecipes = JSON.parse(localStorage.getItem('recipes')) || [];
+            allRecipes.unshift(newRecipeObj);
+            localStorage.setItem('recipes', JSON.stringify(allRecipes));
+
+            createRecipeForm.reset();
+            recipeFileName.textContent = "Файл не выбран";
+            recipePreviewContainer.classList.add('hidden');
+            base64RecipeImg = "";
+            recipeModal.classList.add('hidden');
+
+            renderDessertsPage();
+        });
+
+        // ================= РЕНДЕРИНГ =================
+        function renderDessertsPage() {
+            const featuredContainer = document.getElementById('featured-dessert-container');
+            const grid = document.getElementById('desserts-grid');
+            const featured = dessertRecipes[0];
+
+            featuredContainer.innerHTML = `
+                <article class="main-recipe">
+                    <div class="recipe-hero-image">
+                        <img src="${featured.image}" alt="${featured.title}">
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-meta-top">
+                            <a href="#" class="author-badge">
+                                ${getAvatarHtml(featured.author, "avatar-sm")}
+                                <span>опубликовал(а) ${featured.author.name}</span>
+                            </a>
+                            <div class="rating-display">
+                                <div class="stars">★★★★★</div>
+                                <span class="rating-value">${featured.rating.toFixed(1)}</span>
+                                <span class="votes-count">(${featured.votes} отзывов)</span>
+                            </div>
+                        </div>
+
+                        <h2 class="recipe-title">${featured.title}</h2>
+                        <p class="recipe-description">${featured.description}</p>
+
+                        <div class="kbju-container">
+                            <div class="kbju-item"><span class="kbju-val">${featured.kbju.k}</span><span class="kbju-label">Ккал</span></div>
+                            <div class="kbju-item"><span class="kbju-val">${featured.kbju.b}г</span><span class="kbju-label">Белки</span></div>
+                            <div class="kbju-item"><span class="kbju-val">${featured.kbju.j}г</span><span class="kbju-label">Жиры</span></div>
+                            <div class="kbju-item"><span class="kbju-val">${featured.kbju.u}г</span><span class="kbju-label">Углеводы</span></div>
+                        </div>
+
+                        <div class="rate-this" data-recipe-id="${featured.id}">
+                            <span class="rate-title">Оцените рецепт:</span>
+                            <div class="star-rating-input">
+                                <input type="radio" id="star5-d${featured.id}" name="rate-d${featured.id}" value="5"><label for="star5-d${featured.id}"></label>
+                                <input type="radio" id="star4-d${featured.id}" name="rate-d${featured.id}" value="4"><label for="star4-d${featured.id}"></label>
+                                <input type="radio" id="star3-d${featured.id}" name="rate-d${featured.id}" value="3"><label for="star3-d${featured.id}"></label>
+                                <input type="radio" id="star2-d${featured.id}" name="rate-d${featured.id}" value="2"><label for="star2-d${featured.id}"></label>
+                                <input type="radio" id="star1-d${featured.id}" name="rate-d${featured.id}" value="1"><label for="star1-d${featured.id}"></label>
+                            </div>
+                        </div>
+                    </div>
+                </article>
             `;
 
-        grid.innerHTML = '';
-        dessertRecipes.slice(1).forEach(rec => {
-            const card = document.createElement('article');
-            card.className = 'recipe-card';
-            card.innerHTML = `
+            grid.innerHTML = '';
+            dessertRecipes.slice(1).forEach(rec => {
+                const card = document.createElement('article');
+                card.className = 'recipe-card';
+                card.innerHTML = `
                     <div class="card-img-wrapper">
                         <img src="${rec.image}" alt="${rec.title}">
                         <div class="card-rating">★ ${rec.rating.toFixed(1)}</div>
@@ -174,38 +499,32 @@
                         <p class="card-desc">${rec.description}</p>
                         <div class="card-kbju">
                             <span><b>${rec.kbju.k}</b> ккал</span>
+                            <span><b>Б:</b> ${rec.kbju.b}г</span>
+                            <span><b>Ж:</b> ${rec.kbju.j}г</span>
+                            <span><b>У:</b> ${rec.kbju.u}г</span>
                         </div>
                     </div>
                 `;
-            grid.appendChild(card);
-        });
-
-
-
-        function setupRatingSystem() {
-            const ratingInputs = document.querySelectorAll('.star-rating-input input');
-            ratingInputs.forEach(input => {
-                // Удаляем старые слушатели, чтобы не дублировались
-                input.replaceWith(input.cloneNode(true));
+                grid.appendChild(card);
             });
 
-            // Добавляем новые
+            setupRatingSystem();
+        }
+
+        function setupRatingSystem() {
             document.querySelectorAll('.star-rating-input input').forEach(input => {
                 input.addEventListener('change', (e) => {
                     const ratingValue = parseInt(e.target.value);
-                    const recipeId = e.target.name.split('-')[1].replace('b',''); // для breakfasts/desserts
-
-                    // Здесь можно добавить логику сохранения рейтинга в localStorage,
-                    // но для начала хотя бы покажем, что работает
+                    const recipeId = e.target.name.split('-')[1].replace('d', '');
                     console.log(`Оценка ${ratingValue} для рецепта ${recipeId}`);
                     alert(`Вы поставили ${ratingValue} ★ рецепту!`);
                 });
             });
         }
-        setupRatingSystem();
-    }
 
-    document.addEventListener('DOMContentLoaded', renderDessertsPage);
+        checkAuth();
+        renderDessertsPage();
+    });
 </script>
 </body>
 </html>

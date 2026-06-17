@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Завтраки — cocoshef</title>
+    <title>Веганское — cocoshef</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,14 +33,14 @@
 
 <main class="main-content">
     <section class="filter-section">
-        <h1 class="page-title">Завтраки с душой</h1>
-        <p class="page-subtitle">Начните день красиво и вкусно</p>
+        <h1 class="page-title">Веганская кухня</h1>
+        <p class="page-subtitle">Растительные рецепты с душой и вкусом</p>
 
         <div class="filter-wrapper">
             <div class="filter-group">
                 <a href="main.html" class="filter-btn">Все рецепты</a>
-                <button class="filter-btn active">Завтраки</button>
-                <a href="vegan.html" class="filter-btn">Веганское</a>
+                <a href="breakfast.html" class="filter-btn">Завтраки</a>
+                <button class="filter-btn active">Веганское</button>
                 <a href="deserts.html" class="filter-btn">Десерты</a>
             </div>
             <div class="sort-select-wrapper">
@@ -52,11 +52,11 @@
         </div>
     </section>
 
-    <section class="recipe-detail-container" id="featured-breakfast-container"></section>
+    <section class="recipe-detail-container" id="featured-vegan-container"></section>
 
     <section class="similar-section">
-        <h3 class="section-divider-title">Ещё завтраки нашей кухни</h3>
-        <div class="recipe-grid" id="breakfasts-grid"></div>
+        <h3 class="section-divider-title">Ещё веганские блюда нашей кухни</h3>
+        <div class="recipe-grid" id="vegan-grid"></div>
     </section>
 </main>
 
@@ -172,27 +172,37 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // ================= ДАННЫЕ ЗАВТРАКОВ =================
-        const breakfastRecipes = [
+        // ================= ДАННЫЕ ВЕГАН-РЕЦЕПТОВ =================
+        const veganRecipes = [
             {
-                id: 101,
-                title: "Французский тост с ягодами и рикоттой",
-                description: "Воздушные бриоши в яичной смеси с ванилью и корицей, подаются с свежими ягодами, рикоттой и медом. Идеальное воскресное утро.",
-                kbju: { k: 385, b: 14, j: 18, u: 42 },
-                image: "https://img.povar.ru/mobile/5f/2c/a1/0e/tost_s_rikottoi_i_klubnikoi-670856.JPG",
+                id: 301,
+                title: "Боул с киноа, запечённой тыквой и тофу",
+                description: "Сытный и яркий боул: киноа, сладкая тыква с пряностями, хрустящий тофу, авокадо и заправка из тахини. Идеальный обед.",
+                kbju: { k: 480, b: 18, j: 24, u: 52 },
+                image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=800",
                 rating: 4.9,
-                votes: 67,
-                author: { name: "София Л.", login: "sophia", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100" }
+                votes: 73,
+                author: { name: "Марк Савин", login: "mark", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100" }
             },
             {
-                id: 102,
-                title: "Овсяная каша с бананом, арахисовой пастой и какао",
-                description: "Кремовая овсянка на кокосовом молоке с бананом, ложкой арахисовой пасты и щепоткой какао.",
-                kbju: { k: 460, b: 13, j: 22, u: 58 },
-                image: "https://images.unsplash.com/photo-1511699651485-9c2f9e8f5f9e?auto=format&fit=crop&q=80&w=800",
+                id: 302,
+                title: "Веганский бургер с чёрной фасолью",
+                description: "Сочная котлета из чёрной фасоли с кукурузой и специями, свежие овощи, авокадо и веганский соус.",
+                kbju: { k: 390, b: 16, j: 12, u: 48 },
+                image: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&q=80&w=800",
                 rating: 4.8,
-                votes: 54,
-                author: { name: "Марк Савин", login: "mark", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100" }
+                votes: 51,
+                author: { name: "Анна М.", login: "anna", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100" }
+            },
+            {
+                id: 303,
+                title: "Карри из нута с кокосовым молоком",
+                description: "Насыщенное карри с нутом, шпинатом, томатами и кокосовым молоком. Подаётся с рисом басмати.",
+                kbju: { k: 410, b: 14, j: 18, u: 46 },
+                image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&q=80&w=800",
+                rating: 4.7,
+                votes: 44,
+                author: { name: "Дмитрий К.", login: "dima", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100" }
             }
         ];
 
@@ -420,14 +430,14 @@
             base64RecipeImg = "";
             recipeModal.classList.add('hidden');
 
-            renderBreakfastPage();
+            renderVeganPage();
         });
 
         // ================= РЕНДЕРИНГ =================
-        function renderBreakfastPage() {
-            const featuredContainer = document.getElementById('featured-breakfast-container');
-            const grid = document.getElementById('breakfasts-grid');
-            const featured = breakfastRecipes[0];
+        function renderVeganPage() {
+            const featuredContainer = document.getElementById('featured-vegan-container');
+            const grid = document.getElementById('vegan-grid');
+            const featured = veganRecipes[0];
 
             featuredContainer.innerHTML = `
                 <article class="main-recipe">
@@ -460,11 +470,11 @@
                         <div class="rate-this" data-recipe-id="${featured.id}">
                             <span class="rate-title">Оцените рецепт:</span>
                             <div class="star-rating-input">
-                                <input type="radio" id="star5-b${featured.id}" name="rate-b${featured.id}" value="5"><label for="star5-b${featured.id}"></label>
-                                <input type="radio" id="star4-b${featured.id}" name="rate-b${featured.id}" value="4"><label for="star4-b${featured.id}"></label>
-                                <input type="radio" id="star3-b${featured.id}" name="rate-b${featured.id}" value="3"><label for="star3-b${featured.id}"></label>
-                                <input type="radio" id="star2-b${featured.id}" name="rate-b${featured.id}" value="2"><label for="star2-b${featured.id}"></label>
-                                <input type="radio" id="star1-b${featured.id}" name="rate-b${featured.id}" value="1"><label for="star1-b${featured.id}"></label>
+                                <input type="radio" id="star5-v${featured.id}" name="rate-v${featured.id}" value="5"><label for="star5-v${featured.id}"></label>
+                                <input type="radio" id="star4-v${featured.id}" name="rate-v${featured.id}" value="4"><label for="star4-v${featured.id}"></label>
+                                <input type="radio" id="star3-v${featured.id}" name="rate-v${featured.id}" value="3"><label for="star3-v${featured.id}"></label>
+                                <input type="radio" id="star2-v${featured.id}" name="rate-v${featured.id}" value="2"><label for="star2-v${featured.id}"></label>
+                                <input type="radio" id="star1-v${featured.id}" name="rate-v${featured.id}" value="1"><label for="star1-v${featured.id}"></label>
                             </div>
                         </div>
                     </div>
@@ -472,7 +482,7 @@
             `;
 
             grid.innerHTML = '';
-            breakfastRecipes.slice(1).forEach(rec => {
+            veganRecipes.slice(1).forEach(rec => {
                 const card = document.createElement('article');
                 card.className = 'recipe-card';
                 card.innerHTML = `
@@ -489,6 +499,9 @@
                         <p class="card-desc">${rec.description}</p>
                         <div class="card-kbju">
                             <span><b>${rec.kbju.k}</b> ккал</span>
+                            <span><b>Б:</b> ${rec.kbju.b}г</span>
+                            <span><b>Ж:</b> ${rec.kbju.j}г</span>
+                            <span><b>У:</b> ${rec.kbju.u}г</span>
                         </div>
                     </div>
                 `;
@@ -502,7 +515,7 @@
             document.querySelectorAll('.star-rating-input input').forEach(input => {
                 input.addEventListener('change', (e) => {
                     const ratingValue = parseInt(e.target.value);
-                    const recipeId = e.target.name.split('-')[1].replace('b', '');
+                    const recipeId = e.target.name.split('-')[1].replace('v', '');
                     console.log(`Оценка ${ratingValue} для рецепта ${recipeId}`);
                     alert(`Вы поставили ${ratingValue} ★ рецепту!`);
                 });
@@ -510,7 +523,7 @@
         }
 
         checkAuth();
-        renderBreakfastPage();
+        renderVeganPage();
     });
 </script>
 </body>

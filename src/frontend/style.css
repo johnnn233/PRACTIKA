@@ -1,4 +1,3 @@
-/* --- ПЕРЕМЕННЫЕ ЦВЕТОВ (Эстетичная темная и пастельная гамма) --- */
 :root {
     --bg-dark: #121110;        /* Глубокий темный трюфель */
     --bg-card: #1c1a18;        /* Мягкий черный для блоков */
@@ -655,4 +654,65 @@ a {
     .nav {
         gap: 15px;
     }
+}
+
+/* ===== НОВЫЕ СТИЛИ ДЛЯ ВЕГАН-СТРАНИЦЫ ===== */
+/* Дополнительные стили для карточек веган-рецептов */
+#vegan-grid .recipe-card .card-kbju {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+}
+
+#vegan-grid .recipe-card .card-kbju span {
+    font-size: 0.8rem;
+}
+
+/* Адаптив для веган-сетки */
+@media (max-width: 968px) {
+    #vegan-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 650px) {
+    #vegan-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Стили для заглушки аватара (если вдруг понадобится) */
+.avatar-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--border-color);
+    color: var(--accent-pastel);
+    font-family: var(--font-serif);
+    font-weight: 600;
+}
+
+.avatar-placeholder.avatar-sm {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 12px;
+}
+
+/* Для больших аватаров в профиле */
+.profile-avatar-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
+}
+
+.avatar-placeholder.profile-avatar-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    font-size: 48px;
+    background: var(--border-color);
+    color: var(--accent-pastel);
 }
