@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cocoshef — Эстетика домашней кулинарии</title>
+    <!-- Подключение благородных шрифтов -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Шапка сайта -->
+    <header class="header">
+        <div class="header-container">
+            <a href="#" class="logo" id="logo-link">cocoshef</a>
+            <nav class="nav">
+                <a href="#" class="nav-link active" id="nav-recipes">Рецепты</a>
+                <a href="#" class="nav-link hidden" id="nav-my-profile">Мой профиль</a>
+            </nav>
+            <div class="user-actions">
+                <button class="btn btn-secondary" id="btn-create-recipe-trigger">Создать рецепт</button>
+                
+                <!-- Кнопка входа для неавторизованных -->
+                <button class="btn btn-secondary" id="auth-trigger-btn">Войти</button>
+
+                <!-- Блок профиля для авторизованных -->
+                <div class="profile-preview hidden" id="profile-block">
+                    <div class="avatar-container" id="profile-avatar-container">
+                        <!-- Сюда вставится аватар или заглушка -->
+                    </div>
+                    <span class="profile-name" id="profile-display-name">Гость</span>
+                    <button class="logout-btn" id="logout-btn">Выйти</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        
+        <!-- ЛЕНТА РЕЦЕПТОВ (ГЛАВНЫЙ ЭКРАН) -->
+        <div id="view-feed">
+            <section class="filter-section">
+                <h1 class="page-title">Рецепты с душой</h1>
+                <p class="page-subtitle">Выбирайте блюда под ваше настроение и рацион</p>
+                
+                <div class="filter-wrapper">
+                    <div class="filter-group">
+                        <button class="filter-btn active">Все рецепты</button>
+                        <button class="filter-btn">Завтраки</button>
+                        <button class="filter-btn">Веганское</button>
+                        <button class="filter-btn">Десерты</button>
+                    </div>
+                    <div class="sort-select-wrapper">
+                        <select class="sort-select">
+                            <option>По рейтингу</option>
+                            <option>Сначала новые</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Главный выделенный рецепт -->
+            <section class="recipe-detail-container" id="featured-recipe-container">
+                <!-- Рендерится динамически из JS -->
+            </section>
+
+            <!-- Сетка похожих рецептов -->
+            <section class="similar-section">
+                <h3 class="section-divider-title">Другие рецепты нашей кухни</h3>
+                <div class="recipe-grid" id="recipes-grid">
+                    <!-- Карточки рендерятся динамически из JS -->
+                </div>
+            </section>
+        </div>
+
+
+        <!-- ЛИЧНЫЙ КАБИНЕТ (ПРОФИЛЬ) -->
+        <div id="view-profile" class="hidden">
+            <section class="profile-header-card">
+                <div class="profile-info-big">
+                    <div class="big-avatar-container" id="profile-big-avatar">
+                        <!-- Аватарка или заглушка -->
+                    </div>
+                    <div class="profile-text-meta">
+                        <h2 class="profile-user-name" id="profile-user-name">Имя пользователя</h2>
+                        <p class="profile-user-login" id="profile-user-login">@login</p>
+                        <p class="profile-stats">Рецептов опубликовано: <span id="profile-recipes-count">0</span></p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="user-recipes-section">
+                <h3 class="section-divider-title">Мои кулинарные шедевры</h3>
+                <div class="recipe-grid" id="user-recipes-grid">
+                    <!-- Сюда попадут только рецепты текущего пользователя -->
+                </div>
+                <div class="empty-state hidden" id="empty-profile-state">
+                    <p>Вы еще не поделились своими рецептами.</p>
+                    <button class="btn btn-secondary" id="btn-create-first-recipe">Создать первый рецепт</button>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+
+    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ / РЕГИСТРАЦИИ -->
+    <div class="modal-overlay hidden" id="auth-modal">
+        <div class="modal-card">
+            <button class="modal-close" id="modal-close-btn">&times;</button>
+            <div class="modal-tabs">
+                <button class="tab-btn active" id="tab-login">Вход</button>
+                <button class="tab-btn" id="tab-register">Регистрация</button>
+            </div>
+
+            <div class="auth-error-msg hidden" id="auth-error">Неверный логин или пароль</div>
+
+            <!-- Вход -->
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label>Логин (никнейм)</label>
+                    <input type="text" id="login-username" required placeholder="Введите логин">
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="login-password" required placeholder="Ваш пароль">
+                </div>
+                <button type="submit" class="btn btn-submit">Войти на сайт</button>
+            </form>
+
+            <!-- Регистрация -->
+            <form id="register-form" class="auth-form hidden">
+                <div class="form-group">
+                    <label>Ваше имя</label>
+                    <input type="text" id="reg-name" required placeholder="Имя для отображения">
+                </div>
+                <div class="form-group">
+                    <label>Логин</label>
+                    <input type="text" id="reg-username" required placeholder="Уникальный никнейм">
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="reg-password" required minlength="4" placeholder="Минимум 4 символа">
+                </div>
+                <!-- Загрузка аватара -->
+                <div class="form-group">
+                    <label>Аватар (необязательно)</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="reg-avatar" accept="image/*">
+                        <span class="file-custom-btn">Выбрать файл</span>
+                        <span class="file-name-display" id="avatar-file-name">Файл не выбран</span>
+                    </div>
+                    <div class="avatar-preview-box hidden" id="avatar-preview-container">
+                        <img id="avatar-preview" src="" alt="Предпросмотр">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-submit">Зарегистрироваться</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- МОДАЛЬНОЕ ОКНО СОЗДАНИЯ РЕЦЕПТА -->
+    <div class="modal-overlay hidden" id="recipe-modal">
+        <div class="modal-card modal-large">
+            <button class="modal-close" id="recipe-modal-close-btn">&times;</button>
+            <h2 class="modal-title-aesthetic">Новый рецепт</h2>
+            <p class="modal-subtitle-aesthetic">Поделитесь вашим кулинарным искусством</p>
+
+            <form id="create-recipe-form" class="auth-form">
+                <div class="form-group">
+                    <label>Название блюда</label>
+                    <input type="text" id="rec-title" required placeholder="Например: Пряный тыквенный суп">
+                </div>
+
+                <div class="form-group">
+                    <label>Описание и способ приготовления</label>
+                    <textarea id="rec-desc" required placeholder="Опишите процесс приготовления, детали подачи и ваши секреты..."></textarea>
+                </div>
+
+                <!-- Блок КБЖУ в ряд -->
+                <div class="kbju-inputs-row">
+                    <div class="form-group">
+                        <label>Калории (ккал)</label>
+                        <input type="number" id="rec-kcal" required placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Белки (г)</label>
+                        <input type="number" id="rec-b" required placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Жиры (г)</label>
+                        <input type="number" id="rec-j" required placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Углеводы (г)</label>
+                        <input type="number" id="rec-u" required placeholder="0">
+                    </div>
+                </div>
+
+                <!-- Фото рецепта -->
+                <div class="form-group">
+                    <label>Фотография готового блюда</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="rec-image" accept="image/*" required>
+                        <span class="file-custom-btn">Загрузить фото</span>
+                        <span class="file-name-display" id="recipe-file-name">Файл не выбран</span>
+                    </div>
+                    <div class="recipe-preview-box hidden" id="recipe-preview-container">
+                        <img id="recipe-preview" src="" alt="Готовое блюдо">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-submit">Опубликовать в cocoshef</button>
+            </form>
+        </div>
+    </div>
+
+
+    <footer class="footer">
+        <p>&copy; 2026 cocoshef. С любовью к чистым вкусам.</p>
+    </footer>
+
+    <!-- ЛОГИКА САЙТА (JAVASCRIPT) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- ЭЛЕМЕНТЫ НАВИГАЦИИ И ЭКРАНОВ ---
+            const viewFeed = document.getElementById('view-feed');
+            const viewProfile = document.getElementById('view-profile');
+            const navRecipes = document.getElementById('nav-recipes');
+            const navMyProfile = document.getElementById('nav-my-profile');
+            const logoLink = document.getElementById('logo-link');
+
+            // --- КНОПКИ И БЛОКИ АВТОРИЗАЦИИ ---
+            const authTriggerBtn = document.getElementById('auth-trigger-btn');
+            const profileBlock = document.getElementById('profile-block');
+            const profileDisplayName = document.getElementById('profile-display-name');
+            const profileAvatarContainer = document.getElementById('profile-avatar-container');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            // --- МОДАЛКА ВХОДА/РЕГИСТРАЦИИ ---
+            const authModal = document.getElementById('auth-modal');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+            const tabLogin = document.getElementById('tab-login');
+            const tabRegister = document.getElementById('tab-register');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const authError = document.getElementById('auth-error');
+
+            // Аватар в регистрации
+            const regAvatarInput = document.getElementById('reg-avatar');
+            const avatarFileName = document.getElementById('avatar-file-name');
+            const avatarPreviewContainer = document.getElementById('avatar-preview-container');
+            const avatarPreview = document.getElementById('avatar-preview');
+            let base64Avatar = ""; // Хранит строку аватара
+
+            // --- МОДАЛКА СОЗДАНИЯ РЕЦЕПТА ---
+            const btnCreateRecipeTrigger = document.getElementById('btn-create-recipe-trigger');
+            const recipeModal = document.getElementById('recipe-modal');
+            const recipeModalCloseBtn = document.getElementById('recipe-modal-close-btn');
+            const createRecipeForm = document.getElementById('create-recipe-form');
+            const recImageInput = document.getElementById('rec-image');
+            const recipeFileName = document.getElementById('recipe-file-name');
+            const recipePreviewContainer = document.getElementById('recipe-preview-container');
+            const recipePreview = document.getElementById('recipe-preview');
+            const btnCreateFirstRecipe = document.getElementById('btn-create-first-recipe');
+            let base64RecipeImg = ""; // Хранит строку изображения блюда
+
+            // --- КОНТЕЙНЕРЫ ДЛЯ РЕЦЕПТОВ ---
+            const featuredRecipeContainer = document.getElementById('featured-recipe-container');
+            const recipesGrid = document.getElementById('recipes-grid');
+            const userRecipesGrid = document.getElementById('user-recipes-grid');
+            const emptyProfileState = document.getElementById('empty-profile-state');
+
+            // --- ПРОФИЛЬНЫЕ ЭЛЕМЕНТЫ ---
+            const profileBigAvatar = document.getElementById('profile-big-avatar');
+            const profileUserName = document.getElementById('profile-user-name');
+            const profileUserLogin = document.getElementById('profile-user-login');
+            const profileRecipesCount = document.getElementById('profile-recipes-count');
+
+
+            // ================= ДАННЫЕ ПО УМОЛЧАНИЮ =================
+            const defaultRecipes = [
+                {
+                    id: 1,
+                    title: "Зеленый боул с авокадо, киноа и нутом",
+                    description: "Идеальный баланс текстур и вкусов в одной тарелке. Пряный запеченный нут, нежная текстура спелого авокадо и легкая заправка на основе лимона и оливкового масла холодного отжима. Прекрасный вариант для легкого обеда.",
+                    kbju: { k: 420, b: 12, j: 18, u: 45 },
+                    image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=800",
+                    rating: 4.9,
+                    votes: 42,
+                    author: { name: "Марк Савин", login: "mark", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100" }
+                },
+                {
+                    id: 2,
+                    title: "Средиземноморский салат с фетой",
+                    description: "Классическое сочетание свежих томатов, огурцов, оливок Каламата и пряного сыра.",
+                    kbju: { k: 290, b: 8, j: 22, u: 11 },
+                    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=600",
+                    rating: 4.7,
+                    votes: 18,
+                    author: { name: "Анна М.", login: "anna", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100" }
+                },
+                {
+                    id: 3,
+                    title: "Томатная паста с базиликом",
+                    description: "Простая итальянская паста с соусом из спелых томатов, чеснока и свежих листьев базилика.",
+                    kbju: { k: 380, b: 11, j: 9, u: 64 },
+                    image: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&q=80&w=600",
+                    rating: 4.8,
+                    votes: 29,
+                    author: { name: "Дмитрий К.", login: "dima", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100" }
+                }
+            ];
+
+            // Проверяем или инициализируем базу рецептов в localStorage
+            if (!localStorage.getItem('recipes')) {
+                localStorage.setItem('recipes', JSON.stringify(defaultRecipes));
+            }
+
+
+            // ================= НАВИГАЦИЯ МЕЖДУ СТРАНИЦАМИ =================
+            function showView(viewName) {
+                if (viewName === 'feed') {
+                    viewFeed.classList.remove('hidden');
+                    viewProfile.classList.add('hidden');
+                    navRecipes.classList.add('active');
+                    navMyProfile.classList.remove('active');
+                } else if (viewName === 'profile') {
+                    viewFeed.classList.add('hidden');
+                    viewProfile.classList.remove('hidden');
+                    navRecipes.classList.remove('active');
+                    navMyProfile.classList.add('active');
+                    renderProfilePage();
+                }
+                window.scrollTo(0,0);
+            }
+
+            navRecipes.addEventListener('click', (e) => { e.preventDefault(); showView('feed'); });
+            navMyProfile.addEventListener('click', (e) => { e.preventDefault(); showView('profile'); });
+            logoLink.addEventListener('click', (e) => { e.preventDefault(); showView('feed'); });
+            profileAvatarContainer.addEventListener('click', () => showView('profile'));
+
+
+            // ================= РЕНДЕРИНГ АВАТАРОК И ЗАГЛУШЕК =================
+            // Генерирует красивую монохромную заглушку с первой буквой имени
+            function getAvatarHtml(user, sizeClass = "avatar") {
+                if (user && user.avatar) {
+                    return `<img src="${user.avatar}" alt="${user.name}" class="${sizeClass}">`;
+                }
+                const firstLetter = user && user.name ? user.name.charAt(0).toUpperCase() : '?';
+                return `<div class="${sizeClass} avatar-placeholder">${firstLetter}</div>`;
+            }
+
+
+            // ================= АВТОРИЗАЦИЯ & ПРОФИЛЬ =================
+            function checkAuth() {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                if (currentUser) {
+                    authTriggerBtn.classList.add('hidden');
+                    profileBlock.classList.remove('hidden');
+                    navMyProfile.classList.remove('hidden');
+                    profileDisplayName.textContent = currentUser.name;
+                    profileAvatarContainer.innerHTML = getAvatarHtml(currentUser, "avatar");
+                } else {
+                    authTriggerBtn.classList.remove('hidden');
+                    profileBlock.classList.add('hidden');
+                    navMyProfile.classList.add('hidden');
+                    showView('feed'); // если разлогинились, уходим с профиля
+                }
+            }
+
+            // Открыть модалку входа
+            authTriggerBtn.addEventListener('click', () => {
+                authModal.classList.remove('hidden');
+                switchTab('login');
+            });
+
+            modalCloseBtn.addEventListener('click', () => authModal.classList.add('hidden'));
+
+            function switchTab(type) {
+                authError.classList.add('hidden');
+                if (type === 'login') {
+                    tabLogin.classList.add('active');
+                    tabRegister.classList.remove('active');
+                    loginForm.classList.remove('hidden');
+                    registerForm.classList.add('hidden');
+                } else {
+                    tabRegister.classList.add('active');
+                    tabLogin.classList.remove('active');
+                    registerForm.classList.remove('hidden');
+                    loginForm.classList.add('hidden');
+                }
+            }
+
+            tabLogin.addEventListener('click', () => switchTab('login'));
+            tabRegister.addEventListener('click', () => switchTab('register'));
+
+            // Обработка загрузки аватара в форму регистрации
+            regAvatarInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    avatarFileName.textContent = file.name;
+                    const reader = new FileReader();
+                    reader.onload = function(evt) {
+                        base64Avatar = evt.target.result;
+                        avatarPreview.src = base64Avatar;
+                        avatarPreviewContainer.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    avatarFileName.textContent = "Файл не выбран";
+                    avatarPreviewContainer.classList.add('hidden');
+                    base64Avatar = "";
+                }
+            });
+
+            // Форма входа
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const usernameVal = document.getElementById('login-username').value.trim();
+                const passwordVal = document.getElementById('login-password').value;
+
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                const foundUser = users.find(u => u.login.toLowerCase() === usernameVal.toLowerCase() && u.password === passwordVal);
+
+                if (foundUser) {
+                    localStorage.setItem('currentUser', JSON.stringify(foundUser));
+                    checkAuth();
+                    authModal.classList.add('hidden');
+                    loginForm.reset();
+                    renderRecipes(); // перерендерить рецепты с обновленными кнопками
+                } else {
+                    authError.textContent = 'Неверный логин или пароль';
+                    authError.classList.remove('hidden');
+                }
+            });
+
+            // Форма регистрации
+            registerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const nameVal = document.getElementById('reg-name').value.trim();
+                const usernameVal = document.getElementById('reg-username').value.trim();
+                const passwordVal = document.getElementById('reg-password').value;
+
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                const userExists = users.some(u => u.login.toLowerCase() === usernameVal.toLowerCase());
+
+                if (userExists) {
+                    authError.textContent = 'Этот логин уже занят!';
+                    authError.classList.remove('hidden');
+                } else {
+                    const newUser = { 
+                        name: nameVal, 
+                        login: usernameVal, 
+                        password: passwordVal,
+                        avatar: base64Avatar || null // сохраняем аватар или null
+                    };
+                    users.push(newUser);
+                    localStorage.setItem('users', JSON.stringify(users));
+
+                    localStorage.setItem('currentUser', JSON.stringify(newUser));
+                    checkAuth();
+                    authModal.classList.add('hidden');
+                    registerForm.reset();
+                    avatarFileName.textContent = "Файл не выбран";
+                    avatarPreviewContainer.classList.add('hidden');
+                    base64Avatar = "";
+                    renderRecipes();
+                }
+            });
+
+            // Выход
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('currentUser');
+                checkAuth();
+                renderRecipes();
+            });
+
+
+            // ================= СОЗДАНИЕ РЕЦЕПТОВ =================
+            btnCreateRecipeTrigger.addEventListener('click', () => {
+                const currentUser = localStorage.getItem('currentUser');
+                if (!currentUser) {
+                    // Если не авторизован — требуем войти
+                    authModal.classList.remove('hidden');
+                    switchTab('login');
+                } else {
+                    recipeModal.classList.remove('hidden');
+                }
+            });
+
+            if (btnCreateFirstRecipe) {
+                btnCreateFirstRecipe.addEventListener('click', () => {
+                    recipeModal.classList.remove('hidden');
+                });
+            }
+
+            recipeModalCloseBtn.addEventListener('click', () => recipeModal.classList.add('hidden'));
+
+            // Загрузка фото в создание рецепта
+            recImageInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    recipeFileName.textContent = file.name;
+                    const reader = new FileReader();
+                    reader.onload = function(evt) {
+                        base64RecipeImg = evt.target.result;
+                        recipePreview.src = base64RecipeImg;
+                        recipePreviewContainer.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    recipeFileName.textContent = "Файл не выбран";
+                    recipePreviewContainer.classList.add('hidden');
+                    base64RecipeImg = "";
+                }
+            });
+
+            // Отправка формы создания рецепта
+            createRecipeForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                if (!currentUser) return;
+
+                const title = document.getElementById('rec-title').value.trim();
+                const desc = document.getElementById('rec-desc').value.trim();
+                const kcal = parseInt(document.getElementById('rec-kcal').value);
+                const b = parseInt(document.getElementById('rec-b').value);
+                const j = parseInt(document.getElementById('rec-j').value);
+                const u = parseInt(document.getElementById('rec-u').value);
+
+                const newRecipeObj = {
+                    id: Date.now(), // генерация id на основе таймстампа
+                    title: title,
+                    description: desc,
+                    kbju: { k: kcal, b: b, j: j, u: u },
+                    image: base64RecipeImg,
+                    rating: 5.0, // начальный рейтинг
+                    votes: 1,
+                    author: {
+                        name: currentUser.name,
+                        login: currentUser.login,
+                        avatar: currentUser.avatar
+                    }
+                };
+
+                const allRecipes = JSON.parse(localStorage.getItem('recipes')) || [];
+                allRecipes.unshift(newRecipeObj); // добавляем в начало списка
+                localStorage.setItem('recipes', JSON.stringify(allRecipes));
+
+                // Сброс формы и закрытие
+                createRecipeForm.reset();
+                recipeFileName.textContent = "Файл не выбран";
+                recipePreviewContainer.classList.add('hidden');
+                base64RecipeImg = "";
+                recipeModal.classList.add('hidden');
+
+                // Обновляем отображение рецептов
+                renderRecipes();
+                
+                // Перенаправляем в личный кабинет, чтобы увидеть свой рецепт
+                showView('profile');
+            });
+
+
+            // ================= ДИНАМИЧЕСКИЙ РЕНДЕРИНГ РЕЦЕПТОВ =================
+            function renderRecipes() {
+                const allRecipes = JSON.parse(localStorage.getItem('recipes')) || [];
+                if (allRecipes.length === 0) return;
+
+                // 1. Рендерим главный выделенный рецепт (первый в списке)
+                const featured = allRecipes[0];
+                featuredRecipeContainer.innerHTML = `
+                    <article class="main-recipe">
+                        <div class="recipe-hero-image">
+                            <img src="${featured.image}" alt="${featured.title}">
+                        </div>
+                        
+                        <div class="recipe-content">
+                            <div class="recipe-meta-top">
+                                <a href="#" class="author-badge" data-author-login="${featured.author.login}">
+                                    ${getAvatarHtml(featured.author, "avatar-sm")}
+                                    <span>опубликовал(а) ${featured.author.name}</span>
+                                </a>
+                                <div class="rating-display">
+                                    <div class="stars">★★★★★</div>
+                                    <span class="rating-value">${featured.rating.toFixed(1)}</span>
+                                    <span class="votes-count">(${featured.votes} отзывов)</span>
+                                </div>
+                            </div>
+
+                            <h2 class="recipe-title">${featured.title}</h2>
+                            <p class="recipe-description">${featured.description}</p>
+
+                            <div class="kbju-container">
+                                <div class="kbju-item">
+                                    <span class="kbju-val">${featured.kbju.k}</span>
+                                    <span class="kbju-label">Ккал</span>
+                                </div>
+                                <div class="kbju-item">
+                                    <span class="kbju-val">${featured.kbju.b}г</span>
+                                    <span class="kbju-label">Белки</span>
+                                </div>
+                                <div class="kbju-item">
+                                    <span class="kbju-val">${featured.kbju.j}г</span>
+                                    <span class="kbju-label">Жиры</span>
+                                </div>
+                                <div class="kbju-item">
+                                    <span class="kbju-val">${featured.kbju.u}г</span>
+                                    <span class="kbju-label">Углеводы</span>
+                                </div>
+                            </div>
+
+                            <div class="rate-this" data-recipe-id="${featured.id}">
+                                <span class="rate-title">Оцените рецепт:</span>
+                                <div class="star-rating-input">
+                                    <input type="radio" id="star5-${featured.id}" name="rate-${featured.id}" value="5"><label for="star5-${featured.id}"></label>
+                                    <input type="radio" id="star4-${featured.id}" name="rate-${featured.id}" value="4"><label for="star4-${featured.id}"></label>
+                                    <input type="radio" id="star3-${featured.id}" name="rate-${featured.id}" value="3"><label for="star3-${featured.id}"></label>
+                                    <input type="radio" id="star2-${featured.id}" name="rate-${featured.id}" value="2"><label for="star2-${featured.id}"></label>
+                                    <input type="radio" id="star1-${featured.id}" name="rate-${featured.id}" value="1"><label for="star1-${featured.id}"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                `;
+
+                // 2. Рендерим остальные рецепты в сетку (все, кроме первого)
+                const gridRecipes = allRecipes.slice(1);
+                recipesGrid.innerHTML = "";
+
+                if (gridRecipes.length === 0) {
+                    recipesGrid.innerHTML = `<p class="no-recipes-msg">Здесь пока только одно главное блюдо. Создайте свое!</p>`;
+                } else {
+                    gridRecipes.forEach(rec => {
+                        const card = document.createElement('article');
+                        card.className = 'recipe-card';
+                        card.innerHTML = `
+                            <div class="card-img-wrapper">
+                                <img src="${rec.image}" alt="${rec.title}">
+                                <div class="card-rating">★ ${rec.rating.toFixed(1)}</div>
+                            </div>
+                            <div class="card-body">
+                                <div class="author-badge card-author">
+                                    ${getAvatarHtml(rec.author, "avatar-sm")}
+                                    <span>${rec.author.name}</span>
+                                </div>
+                                <h4 class="card-title">${rec.title}</h4>
+                                <p class="card-desc">${rec.description}</p>
+                                
+                                <div class="card-kbju">
+                                    <span><b>${rec.kbju.k}</b> ккал</span>
+                                    <span><b>Б:</b> ${rec.kbju.b}г</span>
+                                    <span><b>Ж:</b> ${rec.kbju.j}г</span>
+                                    <span><b>У:</b> ${rec.kbju.u}г</span>
+                                </div>
+                            </div>
+                        `;
+                        recipesGrid.appendChild(card);
+                    });
+                }
+
+                // Логика добавления оценок по клику на звезды
+                setupRatingSystem();
+            }
+
+
+            // ================= СИСТЕМА ОЦЕНКИ (РЕЙТИНГ) =================
+            function setupRatingSystem() {
+                const ratingInputs = document.querySelectorAll('.star-rating-input input');
+                ratingInputs.forEach(input => {
+                    input.addEventListener('change', (e) => {
+                        const ratingValue = parseInt(e.target.value);
+                        const recipeId = e.target.name.split('-')[1];
+
+                        const allRecipes = JSON.parse(localStorage.getItem('recipes')) || [];
+                        const recipeIndex = allRecipes.findIndex(r => r.id == recipeId);
+
+                        if (recipeIndex !== -1) {
+                            // Формула перерасчета рейтинга
+                            const r = allRecipes[recipeIndex];
+                            const totalScore = (r.rating * r.votes) + ratingValue;
+                            r.votes += 1;
+                            r.rating = totalScore / r.votes;
+
+                            allRecipes[recipeIndex] = r;
+                            localStorage.setItem('recipes', JSON.stringify(allRecipes));
+                            
+                            // Мягко перерендерим данные
+                            renderRecipes();
+                        }
+                    });
+                });
+            }
+
+
+            // ================= ЛИЧНЫЙ КАБИНЕТ (РЕНДЕРИНГ) =================
+            function renderProfilePage() {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                if (!currentUser) return;
+
+                // Заполняем текстовую информацию
+                profileBigAvatar.innerHTML = getAvatarHtml(currentUser, "profile-avatar-large");
+                profileUserName.textContent = currentUser.name;
+                profileUserLogin.textContent = `@${currentUser.login}`;
+
+                // Ищем рецепты этого автора
+                const allRecipes = JSON.parse(localStorage.getItem('recipes')) || [];
+                const userRecipes = allRecipes.filter(r => r.author.login === currentUser.login);
+
+                profileRecipesCount.textContent = userRecipes.length;
+
+                userRecipesGrid.innerHTML = "";
+
+                if (userRecipes.length === 0) {
+                    emptyProfileState.classList.remove('hidden');
+                } else {
+                    emptyProfileState.classList.add('hidden');
+                    userRecipes.forEach(rec => {
+                        const card = document.createElement('article');
+                        card.className = 'recipe-card';
+                        card.innerHTML = `
+                            <div class="card-img-wrapper">
+                                <img src="${rec.image}" alt="${rec.title}">
+                                <div class="card-rating">★ ${rec.rating.toFixed(1)}</div>
+                            </div>
+                            <div class="card-body">
+                                <h4 class="card-title">${rec.title}</h4>
+                                <p class="card-desc">${rec.description}</p>
+                                <div class="card-kbju">
+                                    <span><b>${rec.kbju.k}</b> ккал</span>
+                                    <span><b>Б:</b> ${rec.kbju.b}г</span>
+                                    <span><b>Ж:</b> ${rec.kbju.j}г</span>
+                                </div>
+                            </div>
+                        `;
+                        userRecipesGrid.appendChild(card);
+                    });
+                }
+            }
+
+
+            // Инициализация при старте
+            checkAuth();
+            renderRecipes();
+        });
+    </script>
+</body>
+</html>
