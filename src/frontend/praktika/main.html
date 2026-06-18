@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cocoshef — Эстетика домашней кулинарии</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-category="all">
+
+    <!-- Шапка сайта -->
+    <header class="header">
+        <div class="header-container">
+            <a href="index.html" class="logo" id="logo-link">cocoshef</a>
+            <nav class="nav">
+                <a href="#" class="nav-link active" id="nav-recipes">Рецепты</a>
+                <a href="#" class="nav-link hidden" id="nav-my-profile">Мой профиль</a>
+            </nav>
+            <div class="user-actions">
+                <button class="btn btn-secondary" id="btn-create-recipe-trigger">Создать рецепт</button>
+                <button class="btn btn-secondary" id="auth-trigger-btn">Войти</button>
+                <div class="profile-preview hidden" id="profile-block">
+                    <div class="avatar-container" id="profile-avatar-container"></div>
+                    <span class="profile-name" id="profile-display-name">Гость</span>
+                    <button class="logout-btn" id="logout-btn">Выйти</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+
+        <!-- ЛЕНТА РЕЦЕПТОВ -->
+        <div id="view-feed">
+            <section class="filter-section">
+                <h1 class="page-title" id="page-title">Рецепты с душой</h1>
+                <p class="page-subtitle" id="page-subtitle">Выбирайте блюда под ваше настроение и рацион</p>
+
+                <div class="search-bar">
+                    <span class="search-icon">⌕</span>
+                    <input type="text" id="search-input" class="search-input" placeholder="Найти рецепт или ингредиент…">
+                </div>
+
+                <div class="filter-wrapper">
+                    <div class="filter-group">
+                        <a href="index.html" class="filter-btn" data-cat="all">Все рецепты</a>
+                        <a href="breakfast.html" class="filter-btn" data-cat="breakfast">Завтраки</a>
+                        <a href="vegan.html" class="filter-btn" data-cat="vegan">Веганское</a>
+                        <a href="deserts.html" class="filter-btn" data-cat="dessert">Десерты</a>
+                        <a href="random.html" class="filter-btn" data-cat="random">Случайный рецепт</a>
+                        <a href="articles.html" class="filter-btn" data-cat="articles">Статьи</a>
+                    </div>
+                    <div class="sort-select-wrapper">
+                        <select class="sort-select" id="sort-select">
+                            <option value="rating">По рейтингу</option>
+                            <option value="new">Сначала новые</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section class="recipe-detail-container" id="featured-recipe-container"></section>
+
+            <section class="similar-section">
+                <h3 class="section-divider-title" id="section-more-title">Другие рецепты нашей кухни</h3>
+                <div class="recipe-grid" id="recipes-grid"></div>
+            </section>
+        </div>
+
+        <!-- ЛИЧНЫЙ КАБИНЕТ -->
+        <div id="view-profile" class="hidden"></div>
+
+    </main>
+
+    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ / РЕГИСТРАЦИИ -->
+    <div class="modal-overlay hidden" id="auth-modal">
+        <div class="modal-card">
+            <button class="modal-close" id="modal-close-btn">&times;</button>
+            <div class="modal-tabs">
+                <button class="tab-btn active" id="tab-login">Вход</button>
+                <button class="tab-btn" id="tab-register">Регистрация</button>
+            </div>
+
+            <div class="auth-error-msg hidden" id="auth-error">Неверный логин или пароль</div>
+
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label>Логин (никнейм)</label>
+                    <input type="text" id="login-username" required placeholder="Введите логин">
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="login-password" required placeholder="Ваш пароль">
+                </div>
+                <button type="submit" class="btn btn-submit">Войти на сайт</button>
+            </form>
+
+            <form id="register-form" class="auth-form hidden">
+                <div class="form-group">
+                    <label>Ваше имя</label>
+                    <input type="text" id="reg-name" required placeholder="Имя для отображения">
+                </div>
+                <div class="form-group">
+                    <label>Логин</label>
+                    <input type="text" id="reg-username" required placeholder="Уникальный никнейм">
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="reg-password" required minlength="4" placeholder="Минимум 4 символа">
+                </div>
+                <div class="form-group">
+                    <label>Аватар (необязательно)</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="reg-avatar" accept="image/*">
+                        <span class="file-custom-btn">Выбрать файл</span>
+                        <span class="file-name-display" id="avatar-file-name">Файл не выбран</span>
+                    </div>
+                    <div class="avatar-preview-box hidden" id="avatar-preview-container">
+                        <img id="avatar-preview" src="" alt="Предпросмотр">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-submit">Зарегистрироваться</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО СОЗДАНИЯ РЕЦЕПТА -->
+    <div class="modal-overlay hidden" id="recipe-modal">
+        <div class="modal-card modal-large">
+            <button class="modal-close" id="recipe-modal-close-btn">&times;</button>
+            <h2 class="modal-title-aesthetic">Новый рецепт</h2>
+            <p class="modal-subtitle-aesthetic">Поделитесь вашим кулинарным искусством</p>
+
+            <form id="create-recipe-form" class="auth-form">
+                <div class="form-group">
+                    <label>Название блюда</label>
+                    <input type="text" id="rec-title" required placeholder="Например: Пряный тыквенный суп">
+                </div>
+
+                <div class="form-group">
+                    <label>Категория</label>
+                    <select id="rec-category" class="sort-select">
+                        <option value="breakfast">Завтрак</option>
+                        <option value="vegan">Веганское</option>
+                        <option value="dessert">Десерт</option>
+                        <option value="salad">Салат</option>
+                        <option value="main">Основное блюдо</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Краткое описание</label>
+                    <textarea id="rec-desc" required placeholder="Пара слов о блюде и его подаче…"></textarea>
+                </div>
+
+                <div class="kbju-inputs-row">
+                    <div class="form-group">
+                        <label>Время (мин)</label>
+                        <input type="number" id="rec-time" required placeholder="30">
+                    </div>
+                    <div class="form-group">
+                        <label>Порции</label>
+                        <input type="number" id="rec-servings" required placeholder="2">
+                    </div>
+                    <div class="form-group">
+                        <label>Сложность</label>
+                        <select id="rec-difficulty" class="sort-select">
+                            <option>Легко</option>
+                            <option>Средне</option>
+                            <option>Сложно</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ингредиенты (по одному на строку)</label>
+                    <textarea id="rec-ingredients" required placeholder="200 г муки&#10;2 яйца&#10;100 мл молока"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Шаги приготовления (по одному на строку)</label>
+                    <textarea id="rec-steps" required placeholder="Смешайте сухие ингредиенты&#10;Добавьте яйца и молоко&#10;Выпекайте 20 минут"></textarea>
+                </div>
+
+                <div class="kbju-inputs-row">
+                    <div class="form-group">
+                        <label>Калории (ккал)</label>
+                        <input type="number" id="rec-kcal" required placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Белки (г)</label>
+                        <input type="number" id="rec-b" required placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Жиры (г)</label>
+                        <input type="number" id="rec-j" required placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Углеводы (г)</label>
+                        <input type="number" id="rec-u" required placeholder="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Фотография готового блюда (необязательно)</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="rec-image" accept="image/*">
+                        <span class="file-custom-btn">Загрузить фото</span>
+                        <span class="file-name-display" id="recipe-file-name">Файл не выбран</span>
+                    </div>
+                    <div class="recipe-preview-box hidden" id="recipe-preview-container">
+                        <img id="recipe-preview" src="" alt="Готовое блюдо">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-submit">Опубликовать в cocoshef</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ДЕТАЛЬНОГО ПРОСМОТРА РЕЦЕПТА -->
+    <div class="modal-overlay hidden" id="detail-modal">
+        <div class="modal-card modal-detail">
+            <button class="modal-close" id="detail-close-btn">&times;</button>
+            <div class="detail-body" id="detail-body"></div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2026 cocoshef. С любовью к чистым вкусам.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
